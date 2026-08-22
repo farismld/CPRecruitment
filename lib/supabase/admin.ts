@@ -1,5 +1,4 @@
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "@/types/database";
 
 /**
  * Client Supabase dengan SERVICE ROLE KEY.
@@ -12,6 +11,13 @@ import type { Database } from "@/types/database";
  *      izin INSERT langsung ke tabel applicants).
  *   2) Operasi admin CRUD berita/lowongan/pelamar dari API route setelah
  *      sesi admin diverifikasi terlebih dahulu.
+ *
+ * Catatan tipe: client ini SENGAJA tidak diberi generic <Database> seperti
+ * client biasa (lib/supabase/server.ts, lib/supabase/client.ts). Data yang
+ * masuk ke sini sudah divalidasi lewat Zod di setiap route sebelum dipakai,
+ * jadi keamanan tipe di titik ini bukan lapisan pertahanan utama — dan ini
+ * menghindari ketidakcocokan versi generic Postgrest yang bisa membuat
+ * build gagal di lingkungan deploy yang menarik versi paket terbaru.
  */
 export function createAdminClient() {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
@@ -20,7 +26,7 @@ export function createAdminClient() {
     );
   }
 
-  return createSupabaseClient<Database>(
+  return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY,
     {
