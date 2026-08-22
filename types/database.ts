@@ -84,6 +84,7 @@ export interface Database {
         Row: News;
         Insert: Partial<News> & { title: string; slug: string; content: string; excerpt: string };
         Update: Partial<News>;
+        Relationships: [];
       };
       jobs: {
         Row: Job;
@@ -97,6 +98,7 @@ export interface Database {
           deadline: string;
         };
         Update: Partial<Job>;
+        Relationships: [];
       };
       applicants: {
         Row: Applicant;
@@ -118,12 +120,33 @@ export interface Database {
           cv_url: string;
         };
         Update: Partial<Applicant>;
+        Relationships: [
+          {
+            foreignKeyName: "applicants_job_id_fkey";
+            columns: ["job_id"];
+            referencedRelation: "jobs";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       admin_profiles: {
         Row: AdminProfile;
         Insert: Partial<AdminProfile> & { id: string; full_name: string };
         Update: Partial<AdminProfile>;
+        Relationships: [];
       };
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      [_ in never]: never;
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
     };
   };
 }
