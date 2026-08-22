@@ -67,10 +67,11 @@ async function getDashboardData() {
       .limit(5),
   ]);
 
-  const chartData = STATUS_LIST.map((status) => ({
-    status,
-    total: (statusCounts || []).filter((a) => a.status === status).length,
-  }));
+   const statusList = (statusCounts || []) as { status: ApplicantStatus }[];
+   const chartData = STATUS_LIST.map((status) => ({
+     status,
+     total: statusList.filter((a) => a.status === status).length,
+   }));
 
   return {
     totalApplicants: totalApplicants || 0,
