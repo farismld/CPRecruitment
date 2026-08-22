@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { slugify } from "@/lib/utils";
 import { z } from "zod";
+import type { News } from "@/types/database";
 
 const newsUpdateSchema = z.object({
   title: z.string().min(5).optional(),
@@ -66,7 +67,7 @@ export async function PATCH(
     }
 
     const admin = createAdminClient();
-    const updateData: Record<string, unknown> = { ...parsed.data };
+    const updateData: Partial<News> = { ...parsed.data };
 
     // Regenerate slug jika judul berubah
     if (parsed.data.title) {
