@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { slugify } from "@/lib/utils";
 import { z } from "zod";
+import type { Job } from "@/types/database";
 
 const jobUpdateSchema = z.object({
   title: z.string().min(3).optional(),
@@ -68,7 +69,7 @@ export async function PATCH(
     }
 
     const admin = createAdminClient();
-    const updateData: Record<string, unknown> = { ...parsed.data };
+    const updateData: Partial<Job> = { ...parsed.data };
 
     if (parsed.data.title) {
       const baseSlug = slugify(parsed.data.title);
