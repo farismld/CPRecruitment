@@ -30,19 +30,22 @@ export async function GET() {
   }
 
   const supabase = createClient();
-  const { data: jobs, error } = await supabase
+  const { data: rawJobs, error } = await supabase
     .from("jobs")
     .select("*")
     .order("created_at", { ascending: false });
+
+  const jobs = (rawJobs || []) as import("@/types/database").Job[];
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
   // Hitung jumlah pelamar per lowongan
-  const { data: applicantCounts } = await supabase.from("applicants").select("job_id");
+  const { data: rawCounts } = await supabase.from("applicants").select("job_id");
+  const applicantCounts = (rawCounts || []) as { job_id: string }[];
   const countMap: Record<string, number> = {};
-  (applicantCounts || []).forEach((a) => {
+  applicantCounts.forEach((a) => {
     countMap[a.job_id] = (countMap[a.job_id] || 0) + 1;
   });
 
@@ -67,9 +70,10 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+    const validatedData = parsed.data;
 
     const admin = createAdminClient();
-    const baseSlug = slugify(parsed.data.title);
+    const baseSlug = slugify(validatedData.title);
 
     let slug = baseSlug;
     let counter = 1;
