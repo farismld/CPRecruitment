@@ -27,12 +27,20 @@ export async function POST(request: Request) {
     }
 
     const admin = createAdminClient();
-    const { data, error } = await admin
+    const { data: rawData, error } = await admin
       .from("applicants")
       .select("application_number, status, created_at, full_name, jobs(title)")
       .eq("application_number", parsed.data.application_number.trim().toUpperCase())
       .eq("email", parsed.data.email.trim().toLowerCase())
       .maybeSingle();
+
+    const data = rawData as {
+      application_number: string;
+      status: string;
+      created_at: string;
+      full_name: string;
+      jobs: { title: string } | null;
+    } | null;
 
     if (error || !data) {
       return NextResponse.json(
