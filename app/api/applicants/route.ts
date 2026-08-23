@@ -71,12 +71,16 @@ export async function POST(request: Request) {
       );
     }
 
+    // Ekstrak data yang sudah tervalidasi ke variabel lokal
+    // agar TypeScript tidak perlu mengecek ulang `parsed.success`
+    const validatedData = parsed.data;
+
     // Pastikan lowongan yang dilamar memang masih aktif
     const supabase = createClient();
     const { data: jobData } = await supabase
       .from("jobs")
       .select("id, status, deadline")
-      .eq("id", parsed.data.job_id)
+      .eq("id", validatedData.job_id)
       .eq("status", "active")
       .maybeSingle();
 
@@ -111,9 +115,11 @@ export async function POST(request: Request) {
       );
     }
 
+    const jobId = validatedData.job_id;
+
     async function uploadDoc(file: File, label: string): Promise<string> {
       const ext = file.name.split(".").pop();
-      const path = `applicants/${parsed.data.job_id}/${Date.now()}-${label}-${Math.random()
+      const path = `applicants/${jobId}/${Date.now()}-${label}-${Math.random()
         .toString(36)
         .slice(2, 8)}.${ext}`;
       const buffer = await file.arrayBuffer();
@@ -153,8 +159,8 @@ export async function POST(request: Request) {
     const { data: applicant, error: insertError } = await admin
       .from("applicants")
       .insert({
-        ...parsed.data,
-        email: parsed.data.email.trim().toLowerCase(),
+        ...validatedData,
+        email: validatedData.email.trim().toLowerCase(),
         cv_url,
         cover_letter_url,
         certificate_url,
