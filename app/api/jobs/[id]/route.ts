@@ -76,12 +76,13 @@ export async function PATCH(
       let slug = baseSlug;
       let counter = 1;
       while (true) {
-        const { data: existing } = await admin
+        const { data: existingData } = await admin
           .from("jobs")
           .select("id")
           .eq("slug", slug)
           .neq("id", params.id)
           .maybeSingle();
+        const existing = existingData as { id: string } | null;
         if (!existing) break;
         slug = `${baseSlug}-${counter}`;
         counter++;
