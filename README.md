@@ -249,4 +249,3 @@ punya, atau gunakan subdomain `.vercel.app` gratis selamanya.
   `app/api/applicants/route.ts` setelah insert berhasil.
 - **Multi-admin role**: kolom `role` di `admin_profiles` sudah tersedia
   (`admin` / `super_admin`) untuk pengembangan hak akses bertingkat.
-
