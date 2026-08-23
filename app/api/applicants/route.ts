@@ -73,12 +73,14 @@ export async function POST(request: Request) {
 
     // Pastikan lowongan yang dilamar memang masih aktif
     const supabase = createClient();
-    const { data: job } = await supabase
+    const { data: jobData } = await supabase
       .from("jobs")
       .select("id, status, deadline")
       .eq("id", parsed.data.job_id)
       .eq("status", "active")
       .maybeSingle();
+
+    const job = jobData as { id: string; status: string; deadline: string } | null;
 
     if (!job) {
       return NextResponse.json(
