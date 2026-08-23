@@ -30,10 +30,12 @@ export async function GET(request: Request) {
   }
 
   const supabase = createClient();
-  const { data, error } = await supabase
+  const { data: rawNews, error } = await supabase
     .from("news")
     .select("*")
     .order("created_at", { ascending: false });
+
+  const data = (rawNews || []) as import("@/types/database").News[];
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -58,9 +60,10 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+    const validatedData = parsed.data;
 
     const admin = createAdminClient();
-    const baseSlug = slugify(parsed.data.title);
+    const baseSlug = slugify(validatedData.title);
 
     // Pastikan slug unik
     let slug = baseSlug;
