@@ -33,11 +33,13 @@ export async function GET(
   }
 
   const supabase = createClient();
-  const { data, error } = await supabase
+  const { data: rawNewsItem, error } = await supabase
     .from("news")
     .select("*")
     .eq("id", params.id)
     .single();
+
+  const data = rawNewsItem as import("@/types/database").News | null;
 
   if (error || !data) {
     return NextResponse.json({ error: "Berita tidak ditemukan" }, { status: 404 });
@@ -65,13 +67,14 @@ export async function PATCH(
         { status: 400 }
       );
     }
+    const validatedData = parsed.data;
 
     const admin = createAdminClient();
     const updateData: Partial<News> = { ...parsed.data };
 
     // Regenerate slug jika judul berubah
-    if (parsed.data.title) {
-      const baseSlug = slugify(parsed.data.title);
+    if (validatedData.title) {
+      const baseSlug = slugify(validatedData.title);
       let slug = baseSlug;
       let counter = 1;
       while (true) {
