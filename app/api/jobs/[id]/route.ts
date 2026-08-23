@@ -34,7 +34,8 @@ export async function GET(
   }
 
   const supabase = createClient();
-  const { data, error } = await supabase.from("jobs").select("*").eq("id", params.id).single();
+  const { data: rawJob, error } = await supabase.from("jobs").select("*").eq("id", params.id).single();
+  const data = rawJob as import("@/types/database").Job | null;
 
   if (error || !data) {
     return NextResponse.json({ error: "Lowongan tidak ditemukan" }, { status: 404 });
@@ -67,12 +68,13 @@ export async function PATCH(
         { status: 400 }
       );
     }
+    const validatedData = parsed.data;
 
     const admin = createAdminClient();
     const updateData: Partial<Job> = { ...parsed.data };
 
-    if (parsed.data.title) {
-      const baseSlug = slugify(parsed.data.title);
+    if (validatedData.title) {
+      const baseSlug = slugify(validatedData.title);
       let slug = baseSlug;
       let counter = 1;
       while (true) {
