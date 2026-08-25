@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   Building2,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -21,6 +22,7 @@ const links = [
   { href: "/admin/applicants", label: "Data Pelamar", icon: Users },
   { href: "/admin/news", label: "Berita", icon: Newspaper },
   { href: "/admin/jobs", label: "Lowongan", icon: Briefcase },
+  { href: "/admin/settings", label: "Pengaturan", icon: Settings },
 ];
 
 export function AdminSidebar({ adminName }: { adminName?: string }) {
