@@ -14,11 +14,11 @@ export function Hero({ settings = {} }: { settings?: SiteSettings }) {
         <div className="max-w-3xl">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-100 text-brand-700 px-3.5 py-1.5 text-xs font-medium mb-6">
             <Sparkles className="h-3.5 w-3.5" />
-            {s(settings, "company_tagline", "Perusahaan Terpercaya Sejak 2010")}
+            {s(settings, "hero_badge", "Perusahaan Terpercaya Sejak 2010")}
           </span>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 leading-tight">
-            {s(settings, "hero_title", "Mitra Bisnis Anda Menuju")}{" "}
-            <span className="text-brand-600">Pertumbuhan Berkelanjutan</span>
+            {s(settings, "hero_title_line1", "Mitra Bisnis Anda Menuju")}
+            <span className="text-brand-600"> {s(settings, "hero_title_highlight", "Pertumbuhan Berkelanjutan")}</span>
           </h1>
           <p className="mt-5 text-base sm:text-lg text-gray-600 leading-relaxed max-w-2xl">
             {s(settings, "hero_subtitle", "Solusi bisnis yang inovatif, andal, dan berkelanjutan untuk membantu perusahaan Anda tumbuh lebih cepat.")}
