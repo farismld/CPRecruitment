@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import {
   Building2, Layout, Palette, ImageIcon, Share2,
   Info, Layers, Star, Save, Loader2, CheckCircle2,
+  Phone, MapPin, Mail, Briefcase,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ImageEditor } from "@/components/admin/ImageEditor";
@@ -12,14 +13,15 @@ import { ImageEditor } from "@/components/admin/ImageEditor";
 type Settings = Record<string, string>;
 
 const TABS = [
-  { id: "identity",   label: "Identitas",      icon: Building2 },
-  { id: "hero",       label: "Halaman Utama",   icon: Layout },
-  { id: "about",      label: "Tentang Kami",    icon: Info },
-  { id: "services",   label: "Layanan",         icon: Layers },
-  { id: "advantages", label: "Keunggulan",      icon: Star },
-  { id: "theme",      label: "Tema & Warna",    icon: Palette },
-  { id: "media",      label: "Logo & Foto",     icon: ImageIcon },
-  { id: "social",     label: "Social Media",    icon: Share2 },
+  { id: "identity",   label: "Identitas & Kontak", icon: Building2 },
+  { id: "hero",       label: "Halaman Utama",       icon: Layout },
+  { id: "about",      label: "Tentang Kami",        icon: Info },
+  { id: "services",   label: "Layanan",             icon: Layers },
+  { id: "advantages", label: "Keunggulan",          icon: Star },
+  { id: "career",     label: "Halaman Karir",       icon: Briefcase },
+  { id: "theme",      label: "Tema & Warna",        icon: Palette },
+  { id: "media",      label: "Logo & Foto",         icon: ImageIcon },
+  { id: "social",     label: "Social Media",        icon: Share2 },
 ];
 
 const COLORS = [
@@ -80,8 +82,8 @@ export default function AdminSettingsPage() {
       });
       if (res.ok) {
         setSaved(true);
-        toast.success("Tersimpan! Refresh halaman website untuk melihat perubahan.");
-        setTimeout(() => setSaved(false), 4000);
+        toast.success("Tersimpan! Refresh website untuk melihat perubahan.");
+        setTimeout(() => setSaved(false), 5000);
       } else {
         toast.error("Gagal menyimpan, coba lagi");
       }
@@ -105,15 +107,19 @@ export default function AdminSettingsPage() {
           <p className="text-sm text-gray-500 mt-1">Edit semua teks, gambar, dan tampilan website dari sini.</p>
         </div>
         <Button onClick={save} loading={saving} size="md">
-          {saved ? <><CheckCircle2 className="h-4 w-4" /> Tersimpan</> : <><Save className="h-4 w-4" /> Simpan Perubahan</>}
+          {saved
+            ? <><CheckCircle2 className="h-4 w-4" /> Tersimpan</>
+            : <><Save className="h-4 w-4" /> Simpan Perubahan</>}
         </Button>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        <nav className="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible lg:w-52 shrink-0 pb-1 lg:pb-0">
+        {/* Sidebar */}
+        <nav className="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible lg:w-56 shrink-0 pb-1 lg:pb-0">
           {TABS.map(({ id, label, icon: Icon }) => (
             <button key={id} onClick={() => setTab(id)}
-              className={"flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-sm font-medium whitespace-nowrap transition-colors " + (tab === id ? "bg-brand-600 text-white" : "text-gray-600 hover:bg-gray-100")}>
+              className={"flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-sm font-medium whitespace-nowrap transition-colors " +
+                (tab === id ? "bg-brand-600 text-white" : "text-gray-600 hover:bg-gray-100")}>
               <Icon className="h-4 w-4 shrink-0" />{label}
             </button>
           ))}
@@ -121,44 +127,80 @@ export default function AdminSettingsPage() {
 
         <div className="flex-1 rounded-2xl bg-white border border-gray-100 shadow-sm p-6 space-y-5">
 
+          {/* IDENTITAS & KONTAK */}
           {tab === "identity" && <>
-            <h2 className="font-semibold text-gray-900 text-lg">Identitas Perusahaan</h2>
+            <h2 className="font-semibold text-gray-900 text-lg">Identitas & Kontak Perusahaan</h2>
+            <p className="text-sm text-gray-500">Data ini tampil di Footer, halaman Tentang Kami, dan halaman Kontak.</p>
+
             <Field label="Nama Perusahaan" name="company_name" value={g("company_name")} onChange={update} />
-            <Field label="Tagline / Slogan" name="company_tagline" value={g("company_tagline")} onChange={update} />
+            <Field label="Tagline / Slogan" name="company_tagline" value={g("company_tagline")} onChange={update}
+              hint="Tampil di berbagai bagian website sebagai deskripsi singkat" />
             <Field label="Deskripsi Perusahaan" name="company_description" value={g("company_description")} onChange={update} rows={4} />
-            <Field label="Alamat Lengkap" name="company_address" value={g("company_address")} onChange={update} rows={2} />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field label="Nomor Telepon" name="company_phone" value={g("company_phone")} onChange={update} />
-              <Field label="Email" name="company_email" type="email" value={g("company_email")} onChange={update} />
+
+            <div className="rounded-xl bg-gray-50 border border-gray-100 p-4 space-y-4">
+              <p className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-brand-600" /> Informasi Kontak
+              </p>
+              <Field label="Alamat Lengkap" name="company_address" value={g("company_address")} onChange={update} rows={2} />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field label="Nomor Telepon" name="company_phone" value={g("company_phone")} onChange={update}
+                  hint="Contoh: (021) 555-0123" />
+                <Field label="Email Perusahaan" name="company_email" type="email" value={g("company_email")} onChange={update}
+                  hint="Contoh: info@perusahaan.co.id" />
+              </div>
             </div>
+
             <div className="grid grid-cols-3 gap-4">
-              <Field label="Tahun Pengalaman" name="stat_years" value={g("stat_years","15+")} onChange={update} hint='Contoh: "15+"' />
-              <Field label="Jumlah Klien" name="stat_clients" value={g("stat_clients","500+")} onChange={update} hint='Contoh: "500+"' />
-              <Field label="Jumlah Karyawan" name="stat_employees" value={g("stat_employees","200+")} onChange={update} hint='Contoh: "200+"' />
+              <Field label="Tahun Pengalaman" name="stat_years" value={g("stat_years","15+")} onChange={update}
+                hint='Contoh: "15+"' />
+              <Field label="Jumlah Klien" name="stat_clients" value={g("stat_clients","500+")} onChange={update}
+                hint='Contoh: "500+"' />
+              <Field label="Jumlah Karyawan" name="stat_employees" value={g("stat_employees","200+")} onChange={update}
+                hint='Contoh: "200+"' />
             </div>
           </>}
 
+          {/* HALAMAN UTAMA */}
           {tab === "hero" && <>
             <h2 className="font-semibold text-gray-900 text-lg">Halaman Utama (Home)</h2>
-            <div className="rounded-xl bg-blue-50 border border-blue-100 p-3 text-sm text-blue-700">Teks yang tampil di halaman utama website.</div>
-            <Field label="Judul Besar" name="hero_title" value={g("hero_title")} onChange={update} />
-            <Field label="Teks di bawah judul" name="hero_subtitle" value={g("hero_subtitle")} onChange={update} rows={3} />
-            <Field label="Teks CTA / ajakan di bawah halaman" name="footer_description" value={g("footer_description")} onChange={update} rows={2} />
+            <div className="rounded-xl bg-blue-50 border border-blue-100 p-3 text-sm text-blue-700">
+              Semua teks di bawah ini tampil di halaman utama website.
+            </div>
+
+            <Field label='Teks Badge (kecil di atas judul, contoh: "Perusahaan Terpercaya Sejak 2010")'
+              name="hero_badge" value={g("hero_badge","Perusahaan Terpercaya Sejak 2010")} onChange={update} />
+            <Field label='Judul Baris 1 (contoh: "Mitra Bisnis Anda Menuju")'
+              name="hero_title_line1" value={g("hero_title_line1","Mitra Bisnis Anda Menuju")} onChange={update} />
+            <Field label='Judul Baris 2 / Highlight (contoh: "Pertumbuhan Berkelanjutan")'
+              name="hero_title_highlight" value={g("hero_title_highlight","Pertumbuhan Berkelanjutan")} onChange={update}
+              hint="Teks ini tampil dengan warna utama (brand color)" />
+            <Field label="Teks di bawah judul (subtitle)"
+              name="hero_subtitle" value={g("hero_subtitle")} onChange={update} rows={3} />
+            <Field label="Teks CTA / Ajakan di bagian bawah halaman"
+              name="cta_title" value={g("cta_title","Siap Berkolaborasi dengan Kami?")} onChange={update} />
+            <Field label="Deskripsi CTA"
+              name="cta_desc" value={g("cta_desc")} onChange={update} rows={2} />
           </>}
 
+          {/* TENTANG KAMI */}
           {tab === "about" && <>
             <h2 className="font-semibold text-gray-900 text-lg">Halaman Tentang Kami</h2>
+            <Field label="Subtitle halaman Tentang Kami"
+              name="about_page_subtitle" value={g("about_page_subtitle")} onChange={update} rows={2} />
             <Field label="Visi Perusahaan" name="about_vision" value={g("about_vision")} onChange={update} rows={3} />
             <Field label="Misi Perusahaan" name="about_mission" value={g("about_mission")} onChange={update} rows={5}
-              hint="Pisahkan setiap poin dengan tanda | — Contoh: Misi pertama|Misi kedua|Misi ketiga" />
-            <Field label="Nilai-nilai Perusahaan" name="about_values" value={g("about_values")} onChange={update}
-              hint="Pisahkan dengan | — Contoh: Integritas|Inovasi|Kolaborasi" />
+              hint="Pisahkan setiap poin dengan tanda | — Contoh: Misi 1|Misi 2|Misi 3" />
+            <Field label="Nilai Perusahaan" name="about_values" value={g("about_values")} onChange={update}
+              hint="Pisahkan dengan | — Contoh: Integritas|Inovasi|Kolaborasi|Keunggulan" />
             <Field label="Sejarah Perusahaan" name="about_history" value={g("about_history")} onChange={update} rows={5} />
             <Field label="Profil Perusahaan" name="about_profile" value={g("about_profile")} onChange={update} rows={5} />
           </>}
 
+          {/* LAYANAN */}
           {tab === "services" && <>
-            <h2 className="font-semibold text-gray-900 text-lg">Layanan Perusahaan</h2>
+            <h2 className="font-semibold text-gray-900 text-lg">Halaman Layanan</h2>
+            <Field label="Judul Halaman Layanan" name="service_page_title" value={g("service_page_title","Solusi Bisnis yang Kami Tawarkan")} onChange={update} />
+            <Field label="Deskripsi Halaman Layanan" name="service_page_desc" value={g("service_page_desc")} onChange={update} rows={2} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[1,2,3,4].map(n => (
                 <div key={n} className="rounded-xl border border-gray-100 p-4 space-y-3">
@@ -170,6 +212,7 @@ export default function AdminSettingsPage() {
             </div>
           </>}
 
+          {/* KEUNGGULAN */}
           {tab === "advantages" && <>
             <h2 className="font-semibold text-gray-900 text-lg">Keunggulan Perusahaan</h2>
             <p className="text-sm text-gray-500">Tampil di bagian "Mengapa Memilih Kami" di halaman utama.</p>
@@ -184,51 +227,99 @@ export default function AdminSettingsPage() {
             </div>
           </>}
 
+          {/* HALAMAN KARIR */}
+          {tab === "career" && <>
+            <h2 className="font-semibold text-gray-900 text-lg">Halaman Karir</h2>
+            <Field label="Judul Halaman Karir"
+              name="career_page_title" value={g("career_page_title","Bergabung Bersama Kami")} onChange={update} />
+            <Field label="Deskripsi Halaman Karir"
+              name="career_page_desc" value={g("career_page_desc","Temukan kesempatan berkarir dan kembangkan potensi terbaik Anda bersama kami.")} onChange={update} rows={3} />
+          </>}
+
+          {/* TEMA & WARNA */}
           {tab === "theme" && <>
             <h2 className="font-semibold text-gray-900 text-lg">Tema & Warna</h2>
-            <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-4">
-              {COLORS.map(c => (
-                <button key={c.v} title={c.label} onClick={() => update("primary_color", c.v)}
-                  className={"h-10 rounded-xl border-2 transition-transform hover:scale-110 " + (g("primary_color") === c.v ? "border-gray-800 scale-110" : "border-transparent")}
-                  style={{ backgroundColor: c.v }} />
-              ))}
+            <div className="rounded-xl bg-amber-50 border border-amber-100 p-3 text-sm text-amber-700">
+              <strong>Catatan:</strong> Setelah memilih warna dan menyimpan, website perlu di-refresh untuk melihat perubahan warna secara penuh.
             </div>
-            <div className="flex items-center gap-3">
-              <input type="color" value={g("primary_color","#1c5ff5")} onChange={e => update("primary_color", e.target.value)}
-                className="h-10 w-16 rounded-lg border border-gray-300 cursor-pointer p-0.5" />
-              <input type="text" value={g("primary_color","#1c5ff5")} onChange={e => update("primary_color", e.target.value)}
-                className="rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-mono w-32 focus:outline-none focus:ring-2 focus:ring-brand-500" />
-              <div className="flex-1 h-10 rounded-xl flex items-center justify-center text-white text-sm font-medium"
-                style={{ backgroundColor: g("primary_color","#1c5ff5") }}>
-                Preview Warna
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-3">Pilih Warna Preset</p>
+              <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-5">
+                {COLORS.map(c => (
+                  <button key={c.v} title={c.label} onClick={() => update("primary_color", c.v)}
+                    className={"h-10 rounded-xl border-2 transition-transform hover:scale-110 " +
+                      (g("primary_color") === c.v ? "border-gray-800 scale-110" : "border-transparent")}
+                    style={{ backgroundColor: c.v }} />
+                ))}
+              </div>
+              <p className="text-sm font-medium text-gray-700 mb-2">Warna Kustom (kode hex)</p>
+              <div className="flex items-center gap-3">
+                <input type="color" value={g("primary_color","#1c5ff5")}
+                  onChange={e => update("primary_color", e.target.value)}
+                  className="h-10 w-16 rounded-lg border border-gray-300 cursor-pointer p-0.5" />
+                <input type="text" value={g("primary_color","#1c5ff5")}
+                  onChange={e => update("primary_color", e.target.value)}
+                  className="rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-mono w-32 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+                <div className="flex-1 h-10 rounded-xl flex items-center justify-center text-white text-sm font-medium shadow-sm"
+                  style={{ backgroundColor: g("primary_color","#1c5ff5") }}>
+                  Preview Warna
+                </div>
               </div>
             </div>
           </>}
 
+          {/* LOGO & FOTO */}
           {tab === "media" && <>
             <h2 className="font-semibold text-gray-900 text-lg">Logo & Foto</h2>
-            <ImageEditor label="Logo Perusahaan" currentUrl={g("company_logo_url") || undefined}
-              folder="logo" aspectRatio="free" hint="PNG transparan lebih bagus. Maks. 2MB."
-              onUploadComplete={url => update("company_logo_url", url)} />
-            <hr className="border-gray-100" />
+            <ImageEditor
+              label="Logo Perusahaan"
+              currentUrl={g("company_logo_url") || undefined}
+              folder="logo"
+              aspectRatio="free"
+              hint="PNG transparan lebih bagus. Maks. 2MB."
+              onUploadComplete={url => update("company_logo_url", url)}
+            />
+            {g("company_logo_url") && (
+              <div className="mt-1 p-3 rounded-xl bg-gray-50 border text-xs text-gray-400 break-all">
+                URL: {g("company_logo_url")}
+              </div>
+            )}
+            <hr className="border-gray-100 my-2" />
             <div>
               <h3 className="font-medium text-gray-800 mb-1">Upload Foto untuk Berita</h3>
-              <p className="text-sm text-gray-500 mb-3">Setelah upload, URL foto akan disalin otomatis — tempel di editor berita.</p>
-              <ImageEditor label="Upload Foto" folder="general" aspectRatio="16:9" hint="JPG/PNG maks 2MB."
-                onUploadComplete={url => { navigator.clipboard.writeText(url); toast.success("URL foto disalin! Tempel di editor berita."); }} />
+              <p className="text-sm text-gray-500 mb-3">
+                Setelah upload, URL foto akan <strong>disalin otomatis</strong> — tempel di editor berita.
+              </p>
+              <ImageEditor
+                label="Upload Foto Berita"
+                folder="general"
+                aspectRatio="16:9"
+                hint="JPG/PNG maks 2MB. Output optimal 1280×720px."
+                onUploadComplete={url => {
+                  navigator.clipboard.writeText(url);
+                  toast.success("URL foto disalin! Buka editor berita dan tempel URL tersebut.");
+                }}
+              />
             </div>
           </>}
 
+          {/* SOCIAL MEDIA */}
           {tab === "social" && <>
             <h2 className="font-semibold text-gray-900 text-lg">Social Media</h2>
-            <Field label="Facebook" name="facebook_url" type="url" value={g("facebook_url")} onChange={update} hint="https://facebook.com/namaperusahaan" />
-            <Field label="Instagram" name="instagram_url" type="url" value={g("instagram_url")} onChange={update} hint="https://instagram.com/namaperusahaan" />
-            <Field label="LinkedIn" name="linkedin_url" type="url" value={g("linkedin_url")} onChange={update} hint="https://linkedin.com/company/namaperusahaan" />
+            <p className="text-sm text-gray-500">Link tampil di footer website. Kosongkan jika tidak punya.</p>
+            <Field label="Facebook URL" name="facebook_url" type="url"
+              value={g("facebook_url")} onChange={update} hint="https://facebook.com/namaperusahaan" />
+            <Field label="Instagram URL" name="instagram_url" type="url"
+              value={g("instagram_url")} onChange={update} hint="https://instagram.com/namaperusahaan" />
+            <Field label="LinkedIn URL" name="linkedin_url" type="url"
+              value={g("linkedin_url")} onChange={update} hint="https://linkedin.com/company/namaperusahaan" />
           </>}
 
           <div className="pt-4 border-t border-gray-100 flex justify-end">
             <Button onClick={save} loading={saving}>
-              {saved ? <><CheckCircle2 className="h-4 w-4" /> Tersimpan</> : <><Save className="h-4 w-4" /> Simpan Perubahan</>}
+              {saved
+                ? <><CheckCircle2 className="h-4 w-4" /> Tersimpan</>
+                : <><Save className="h-4 w-4" /> Simpan Perubahan</>}
             </Button>
           </div>
         </div>
