@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { getSiteSettings, s } from "@/lib/settings";
 import { JobCard } from "@/components/public/JobCard";
 import { EmptyState } from "@/components/ui/States";
 import { Briefcase, Search } from "lucide-react";
 import type { Job } from "@/types/database";
 
+export const revalidate = 30;
+
 export const metadata: Metadata = {
   title: "Karir",
-  description: "Bergabunglah bersama PT Maju Bersama Indonesia. Temukan lowongan pekerjaan terbaru yang sesuai dengan minat dan keahlian Anda.",
+  description: "Bergabunglah dan temukan lowongan pekerjaan terbaru.",
 };
-
-export const revalidate = 30;
 
 async function getJobs(): Promise<Job[]> {
   const supabase = createClient();
@@ -23,7 +24,7 @@ async function getJobs(): Promise<Job[]> {
 }
 
 export default async function KarirPage() {
-  const jobs = await getJobs();
+  const [jobs, st] = await Promise.all([getJobs(), getSiteSettings()]);
 
   return (
     <div>
@@ -31,11 +32,10 @@ export default async function KarirPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20 text-center">
           <span className="text-sm font-medium text-brand-600">Karir</span>
           <h1 className="mt-2 text-3xl sm:text-4xl font-bold text-gray-900">
-            Bergabung Bersama Kami
+            {s(st, "career_page_title", "Bergabung Bersama Kami")}
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-gray-600 leading-relaxed">
-            Temukan kesempatan berkarir dan kembangkan potensi terbaik Anda
-            bersama PT Maju Bersama Indonesia.
+            {s(st, "career_page_desc", "Temukan kesempatan berkarir dan kembangkan potensi terbaik Anda bersama kami.")}
           </p>
         </div>
       </section>
@@ -79,3 +79,4 @@ export default async function KarirPage() {
     </div>
   );
 }
+
