@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Menu, X, Building2 } from "lucide-react";
@@ -15,7 +16,13 @@ const navLinks = [
   { href: "/#kontak", label: "Kontak" },
 ];
 
-export function Navbar() {
+export function Navbar({
+  companyName,
+  logoUrl,
+}: {
+  companyName?: string;
+  logoUrl?: string;
+}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -31,6 +38,8 @@ export function Navbar() {
     setOpen(false);
   }, [pathname]);
 
+  const name = companyName || "PT Maju Bersama Indonesia";
+
   return (
     <header
       className={cn(
@@ -39,13 +48,25 @@ export function Navbar() {
       )}
     >
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2 shrink-0">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 text-white">
-            <Building2 className="h-5 w-5" />
-          </span>
-          <span className="font-semibold text-gray-900 text-[15px] leading-tight">
-            PT Maju Bersama
-            <br className="hidden sm:block" /> Indonesia
+        {/* Logo + Nama */}
+        <Link href="/" className="flex items-center gap-2.5 shrink-0 min-w-0">
+          {logoUrl ? (
+            <div className="relative h-9 w-9 shrink-0">
+              <Image
+                src={logoUrl}
+                alt={name}
+                fill
+                className="object-contain rounded"
+                sizes="36px"
+              />
+            </div>
+          ) : (
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 text-white shrink-0">
+              <Building2 className="h-5 w-5" />
+            </span>
+          )}
+          <span className="font-semibold text-gray-900 text-[15px] leading-tight truncate max-w-[180px] sm:max-w-none">
+            {name}
           </span>
         </Link>
 
@@ -83,7 +104,7 @@ export function Navbar() {
         </button>
       </nav>
 
-      {/* Mobile menu panel */}
+      {/* Mobile menu */}
       {open && (
         <div className="md:hidden border-t border-gray-100 bg-white animate-fade-in">
           <div className="flex flex-col gap-1 px-4 py-3">
